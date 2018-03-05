@@ -2,6 +2,7 @@ const int fpVolts = A0;
 int fpSignal = 0;
 int fpOutput = 0;
 int fpFinal = 0;
+const int sampleRate = 500; //in milliseconds
 
 void setup() {
     Serial.begin(9600);
@@ -9,21 +10,27 @@ void setup() {
 }
 
 void fuelPress() {
+  
   fpSignal = analogRead(fpVolts);
   fpOutput = map(fpSignal, 0, 1023, 0, 5000);
   fpFinal = ((fpOutput - 500)/40);
-  if (fpFinal >= 100 || fpFinal <= 0) {
-    Serial.println("Value out of range for specificed sensor: " + String(fpFinal) + " psi");    
+  
+  if (fpFinal > 100) {
+    Serial.println("Value over range for specificed sensor: " + String(fpFinal) + " psi");    
   }
+
+  else if (fpFinal < 0){
+    Serial.println("Value under range for specificed sensor: " + String(fpFinal) + " psi");    
+  }
+  
   else {
-    Serial.println(fpFinal + " psi");
+    Serial.println("Fuel Pressure: " + String(fpFinal) + " psi");
   }
 
 }
 
-void loop() {
-  
+void loop() {  
   fuelPress();
-  delay(10);
+  delay(sampleRate);
 
 }
